@@ -107,10 +107,8 @@ For i = 2 To lastRow
   If Cells(i, 12).Value < 0 Then
   ' Set the Cell Colors to Red if negative
   Cells(i, 12).Interior.ColorIndex = 3
-  Cells(i, 12).Font.ColorIndex = 1
   
   Else: Cells(i, 12).Interior.ColorIndex = 4
-    Cells(i, 12).Font.ColorIndex = 1
     
  End If
 
@@ -120,6 +118,7 @@ For i = 2 To lastRow
 
 'Add variable formatting
  Cells(i, 12).NumberFormat = "0.00%"
+ Range("R2:R3").NumberFormat = "0.00%"
 
 Next i
   
