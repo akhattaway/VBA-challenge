@@ -8,7 +8,7 @@ Stock data by tickers over years 2018-2020.
 Evaluates how stocks performed over years 2018-2020 using total stock volume, close and open value rates. Information is grouped and categorized by years and their ticker first with a summary table and then with insights from the summary table.
 
 # Visuals
-![Alt text](image.png)
+(image.png)
 
 Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
