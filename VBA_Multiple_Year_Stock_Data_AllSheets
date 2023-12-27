@@ -1,0 +1,128 @@
+Sub RunOnAllSheets()
+    Dim ws As Worksheet
+    
+' Loop through each sheet in the workbook
+    For Each ws In ThisWorkbook.Sheets
+' Activate the current sheet
+        ws.Activate
+        
+'-----Setting up information:
+
+'Summary table column headers
+    Range("J1") = "Ticker"
+    Range("K1") = "Yearly Change"
+    Range("L1") = "Percent Change"
+    Range("M1") = "Total Stock Volume"
+
+'Creating a table with insights about Max, Min and total volume from the summary table
+    Range("Q1") = "Ticker"
+    Range("R1") = "Value"
+    Range("P2") = "Greatest % Increase"
+    Range("P3") = "Greatest % Decrease"
+    Range("P4") = "Greatest Total Volume"
+
+'Defining variable types
+    Dim Ticker1 As String
+    Dim Yearly_Change As Double
+    Dim Percent_Change As Double
+    Dim Total_Stock_Volume As Double
+    'When Total Stock Volume was defined As Long there was a overflow error, but worked as double. Why?
+    
+    Dim Summary_Table_Row As String
+    Dim Open_Row_Index As Long
+    Dim Ticker2 As String
+    Dim Value As Double
+    Dim Greatest_Increase As Double
+    Dim Greatest_Decrease As Double
+    Dim Greatest_Total_Volume As Double
+    Dim lastRow As Long
+
+'Defining base values for certain variables to calculate and loop accordingly
+    Open_Row_Index = 2
+    Summary_Table_Row = 2
+    Greatest_Increase = 0
+    Greatest_Decrease = 1
+    Greatest_Total_Volume = 100
+    lastRow = Cells(Rows.Count, 1).End(xlUp).Row
+
+'------Summary Tables from data and calcuations for insights
+
+For i = 2 To lastRow
+    'Consolidating data into a summary table by ticker
+    'if the value in the row below the row you are looping through is not equal to the value in the row you are in then return that ticker symbol in defined range
+    If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+        Ticker1 = Cells(i, 1).Value
+    
+    'calculate yearly change, percent change, and total stock volume for each ticker
+        Yearly_Change = Cells(i, 6).Value - Cells(Open_Row_Index, 3).Value
+        Percent_Change = ((Cells(i, 6).Value - Cells(Open_Row_Index, 3).Value) / Cells(Open_Row_Index, 3).Value)
+        Total_Stock_Volume = Total_Stock_Volume + Cells(i, 7).Value
+    
+    'print the results from calcs above here
+        Range("J" & Summary_Table_Row).Value = Ticker1
+        Range("K" & Summary_Table_Row).Value = Yearly_Change
+        Range("L" & Summary_Table_Row).Value = Percent_Change
+        Range("M" & Summary_Table_Row).Value = Total_Stock_Volume
+    
+        Summary_Table_Row = Summary_Table_Row + 1
+        Open_Row_Index = i + 1
+        Total_Stock_Volume = 0
+        
+        Else
+        ' If the tickers are the same, total the volume
+            Total_Stock_Volume = Total_Stock_Volume + Cells(i, 7).Value
+    End If
+    
+    'Returning the stock with the greatest % increase and associated ticker and printing results
+    If Cells(i, 12).Value > Greatest_Increase Then
+        Greatest_Increase = Cells(i, 12).Value
+        Ticker2 = Cells(i, 10).Value
+        
+        Range("R2") = Greatest_Increase
+        Range("Q2") = Ticker2
+    
+    End If
+    'Returning the stock with the Greatest % Decrease and associated ticker and printing results
+    If Cells(i, 12).Value < Greatest_Decrease Then
+        Greatest_Decrease = Cells(i, 12).Value
+        Ticker2 = Cells(i, 10).Value
+    
+        Range("R3") = Greatest_Decrease
+        Range("Q3") = Ticker2
+        
+    End If
+    'Returning the stock with the Greatest Total Volume and associated ticker and printing results
+    If Cells(i, 13).Value > Greatest_Total_Volume Then
+        Greatest_Total_Volume = Cells(i, 13).Value
+        Ticker2 = Cells(i, 10).Value
+    
+        Range("R4") = Greatest_Total_Volume
+        Range("Q4") = Ticker2
+        
+    End If
+    
+
+'-----Add color conditional formatting
+
+  If Cells(i, 12).Value < 0 Then
+  ' Set the Cell Colors to Red if negative
+  Cells(i, 12).Interior.ColorIndex = 3
+  Cells(i, 12).Font.ColorIndex = 1
+  
+  Else: Cells(i, 12).Interior.ColorIndex = 4
+    Cells(i, 12).Font.ColorIndex = 1
+    
+ End If
+
+    If Cells(i, 12) = "" Then
+    Cells(i, 12).ClearFormats
+ End If
+
+'Add variable formatting
+ Cells(i, 12).NumberFormat = "0.00%"
+
+Next i
+  
+Next ws
+
+End Sub
